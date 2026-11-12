@@ -1,6 +1,9 @@
 import cv2
 from ultralytics import YOLO
 
+TARGET_CLASSES = ["person", "bottle", "cell phone"]
+CONF_THRESHOLD = 0.5
+
 model = YOLO("yolov8n.pt")
 
 cap = cv2.VideoCapture(0)
@@ -21,6 +24,11 @@ while True:
         class_id = int(box.cls[0])
         name = model.names[class_id]
         confidence = float(box.conf[0])
+
+        if name not in TARGET_CLASSES:
+            continue
+        if confidence < CONF_THRESHOLD:
+            continue
 
         x1, y1, x2, y2 = map(int, box.xyxy[0])
 
